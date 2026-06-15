@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lean Six Sigma Suite - Complete Manufacturing Intelligence</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>🏭 Lean6σ Suite</h1>
+                <p>Manufacturing Excellence</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3>📊 Analytics</h3>
+                    <button class="nav-btn active" onclick="switchTool('dashboard')">
+                        📈 Executive Dashboard
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('oee')">
+                        ⚙️ OEE Dashboard
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('spc')">
+                        📉 Control Charts (SPC)
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('capability')">
+                        🎯 Process Capability (Cpk)
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <h3>🔧 Optimization</h3>
+                    <button class="nav-btn" onclick="switchTool('eoq')">
+                        📦 EOQ Calculator
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('safetystock')">
+                        🛡️ Safety Stock
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('doe')">
+                        🧪 Design of Experiments
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('pareto')">
+                        📊 Pareto Analysis
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <h3>⚡ Problem Solving</h3>
+                    <button class="nav-btn" onclick="switchTool('rootcause')">
+                        🌳 Root Cause (5-Why)
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('fmea')">
+                        ⚠️ FMEA Analysis
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('riskmatrix')">
+                        🔴 Risk Matrix
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('hypothesis')">
+                        📊 Hypothesis Testing
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <h3>🎯 Process Improvement</h3>
+                    <button class="nav-btn" onclick="switchTool('vsm')">
+                        🔄 Value Stream Mapping
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('processmap')">
+                        🗺️ Process Mapping
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('dmaic')">
+                        ✅ DMAIC Tracker
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('kaizen')">
+                        🌱 Kaizen Events
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <h3>📋 Management</h3>
+                    <button class="nav-btn" onclick="switchTool('msa')">
+                        🔬 MSA (Gage R&R)
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('supplier')">
+                        🤝 Supplier Scorecard
+                    </button>
+                    <button class="nav-btn" onclick="switchTool('metrics')">
+                        📊 Lean Metrics
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <h3>⚙️ System</h3>
+                    <button class="nav-btn" onclick="switchTool('settings')">
+                        ⚙️ Settings
+                    </button>
+                    <button class="nav-btn" onclick="exportAllData()">
+                        📥 Export Data
+                    </button>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>v1.0 | Premium Suite</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h2 id="toolTitle">Executive Dashboard</h2>
+                    <p id="toolSubtitle">Real-time manufacturing intelligence</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn-help" onclick="showHelp()">❓ Help</button>
+                    <button class="btn-export" onclick="exportCurrentTool()">📥 Export</button>
+                    <div class="user-profile">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234b5563'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E" alt="User">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Tool Content Area -->
+            <div class="content-wrapper">
+                <!-- Dashboard Tool -->
+                <div id="dashboard-tool" class="tool-container active">
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3>📊 Quick Stats</h3>
+                            <div class="stat-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">Active Projects</span>
+                                    <span class="stat-value" id="activeProjects">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Avg OEE</span>
+                                    <span class="stat-value" id="avgOEE">—</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Cpk Score</span>
+                                    <span class="stat-value" id="avgCpk">—</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Savings</span>
+                                    <span class="stat-value" id="totalSavings">\$0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h3>🎯 KPI Dashboard</h3>
+                            <div class="kpi-container">
+                                <div class="kpi-gauge">
+                                    <canvas id="dashboardGauge1"></canvas>
+                                    <p>Process Capability</p>
+                                </div>
+                                <div class="kpi-gauge">
+                                    <canvas id="dashboardGauge2"></canvas>
+                                    <p>Quality Score</p>
+                                </div>
+                                <div class="kpi-gauge">
+                                    <canvas id="dashboardGauge3"></canvas>
+                                    <p>Efficiency</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card full-width">
+                            <h3>📈 Trends (Last 30 Days)</h3>
+                            <canvas id="trendChart"></canvas>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h3>🚨 Critical Issues</h3>
+                            <div class="issues-list" id="criticalIssues">
+                                <p style="color: #999;">No critical issues - System healthy</p>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h3>✅ Recent Improvements</h3>
+                            <div class="improvements-list" id="recentImprovements">
+                                <p style="color: #999;">No improvements logged yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OEE Dashboard Tool -->
+                <div id="oee-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>📊 Production Data Entry</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Machine ID</label>
+                                <input type="text" id="oee-machineId" placeholder="e.g., Machine-01">
+                            </div>
+                            <div class="form-group">
+                                <label>Shift</label>
+                                <select id="oee-shift">
+                                    <option value="Shift A">Shift A (Morning)</option>
+                                    <option value="Shift B">Shift B (Afternoon)</option>
+                                    <option value="Shift C">Shift C (Night)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="oee-date">
+                            </div>
+                            <div class="form-group">
+                                <label>Planned Output (units)</label>
+                                <input type="number" id="oee-planned" placeholder="500" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Actual Output (units)</label>
+                                <input type="number" id="oee-actual" placeholder="450" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Downtime (min)</label>
+                                <input type="number" id="oee-downtime" placeholder="30" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Defect Count</label>
+                                <input type="number" id="oee-defects" placeholder="5" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Shift Length (min)</label>
+                                <input type="number" id="oee-shiftlength" placeholder="480" value="480" min="0">
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="calculateOEE()">➕ Add & Calculate OEE</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>📈 OEE Results</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <h4>⏱️ Availability</h4>
+                                <p class="metric-value" id="oee-availability">—</p>
+                            </div>
+                            <div class="metric-card">
+                                <h4>⚡ Performance</h4>
+                                <p class="metric-value" id="oee-performance">—</p>
+                            </div>
+                            <div class="metric-card">
+                                <h4>✅ Quality</h4>
+                                <p class="metric-value" id="oee-quality">—</p>
+                            </div>
+                            <div class="metric-card highlight">
+                                <h4>🎯 Overall OEE</h4>
+                                <p class="metric-value" id="oee-overall">—</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="data-section">
+                        <h3>📋 Data History</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Machine</th>
+                                    <th>Shift</th>
+                                    <th>Planned</th>
+                                    <th>Actual</th>
+                                    <th>Availability</th>
+                                    <th>Performance</th>
+                                    <th>Quality</th>
+                                    <th>OEE</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="oee-table">
+                                <tr><td colspan="10" style="text-align:center;">No data yet</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SPC (Control Charts) Tool -->
+                <div id="spc-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>📉 Control Chart Setup</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Chart Type</label>
+                                <select id="spc-type" onchange="updateSPCType()">
+                                    <option value="xbar">X-bar & R Chart</option>
+                                    <option value="imr">I-MR Chart (Individual)</option>
+                                    <option value="p">P-Chart (Defect Rate)</option>
+                                    <option value="u">U-Chart (Defects/Unit)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Data Points (comma-separated)</label>
+                                <textarea id="spc-data" placeholder="85, 92, 88, 91, 89, 90, 87, 93, 86, 91"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Upper Specification (USL)</label>
+                                <input type="number" id="spc-usl" placeholder="100" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Lower Specification (LSL)</label>
+                                <input type="number" id="spc-lsl" placeholder="80" step="0.1">
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="calculateSPC()">🚀 Generate Control Chart</button>
+                    </div>
+
+                    <div class="chart-section">
+                        <canvas id="spc-chart" style="max-height: 400px;"></canvas>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h3>📊 Control Chart Analysis</h3>
+                        <div id="spc-analysis" class="analysis-box">
+                            <p>Enter data and calculate to see analysis</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Process Capability (Cpk) Tool -->
+                <div id="capability-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>🎯 Process Capability Analysis</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Data Points (comma-separated or paste)</label>
+                                <textarea id="cpk-data" placeholder="100, 102, 98, 101, 99, 103, 97, 100, 101, 102"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Target / Nominal Value</label>
+                                <input type="number" id="cpk-target" placeholder="100" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Upper Specification Limit (USL)</label>
+                                <input type="number" id="cpk-usl" placeholder="110" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Lower Specification Limit (LSL)</label>
+                                <input type="number" id="cpk-lsl" placeholder="90" step="0.1">
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="calculateCpk()">📊 Calculate Cpk</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>🎯 Capability Indices</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <h4>Cpk (Actual)</h4>
+                                <p class="metric-value" id="cpk-value">—</p>
+                                <p class="metric-label">Process capability</p>
+                            </div>
+                            <div class="metric-card">
+                                <h4>Pp (Potential)</h4>
+                                <p class="metric-value" id="pp-value">—</p>
+                                <p class="metric-label">Potential capability</p>
+                            </div>
+                            <div class="metric-card">
+                                <h4>Ppk</h4>
+                                <p class="metric-value" id="ppk-value">—</p>
+                            </div>
+                            <div class="metric-card">
+                                <h4>DPMO</h4>
+                                <p class="metric-value" id="dpmo-value">—</p>
+                                <p class="metric-label">Defects per million</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>📊 Capability Distribution</h3>
+                        <canvas id="cpk-histogram"></canvas>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h3>📋 Assessment</h3>
+                        <div id="cpk-assessment" class="analysis-box">
+                            <p>Enter data and calculate to see assessment</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EOQ Calculator Tool -->
+                <div id="eoq-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>📦 Economic Order Quantity</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Annual Demand (units)</label>
+                                <input type="number" id="eoq-demand" placeholder="10000" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Ordering Cost per Order ($)</label>
+                                <input type="number" id="eoq-ordering" placeholder="50" min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Holding Cost per Unit/Year ($)</label>
+                                <input type="number" id="eoq-holding" placeholder="5" min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Unit Cost ($)</label>
+                                <input type="number" id="eoq-unitcost" placeholder="25" min="0" step="0.01">
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="calculateEOQ()">🚀 Calculate EOQ</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>📦 Results</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <h4>Economic Order Quantity</h4>
+                                <p class="metric-value" id="eoq-result">—</p>
+                                <p class="metric-label">units per order</p>
+                            </div>
+                            <div class="metric-card">
+                                <h4>Annual Ordering Cost</h4>
+                                <p class="metric-value" id="eoq-orderingcost">—</p>
+                            </div>
+                            <div class="metric-card">
+                                <h4>Annual Holding Cost</h4>
+                                <p class="metric-value" id="eoq-holdingcost">—</p>
+                            </div>
+                            <div class="metric-card highlight">
+                                <h4>Total Annual Cost</h4>
+                                <p class="metric-value" id="eoq-totalcost">—</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>📊 Cost Sensitivity Analysis</h3>
+                        <canvas id="eoq-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Safety Stock Tool -->
+                <div id="safetystock-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>🛡️ Safety Stock Calculator</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Average Daily Demand (units)</label>
+                                <input type="number" id="ss-avgdemand" placeholder="100" min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Std Dev of Demand (units)</label>
+                                <input type="number" id="ss-stddevdemand" placeholder="15" min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Average Lead Time (days)</label>
+                                <input type="number" id="ss-leadtime" placeholder="7" min="0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Std Dev of Lead Time (days)</label>
+                                <input type="number" id="ss-stddevlt" placeholder="2" min="0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Service Level (%)</label>
+                                <select id="ss-servicelevel">
+                                    <option value="0.85">85% - Lower cost</option>
+                                    <option value="0.90">90% - Balanced</option>
+                                    <option value="0.95" selected>95% - Standard</option>
+                                    <option value="0.99">99% - High reliability</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Annual Holding Cost per Unit ($)</label>
+                                <input type="number" id="ss-holdingcost" placeholder="5.50" min="0" step="0.01">
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="calculateSafetyStock()">🛡️ Calculate Safety Stock</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>📦 Safety Stock Results</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <h4>Safety Stock</h4>
+                                <p class="metric-value" id="ss-result">—</p>
+                                <p class="metric-label">units to hold as buffer</p>
+                            </div>
+                            <div class="metric-card">
+                                <h4>Reorder Point (ROP)</h4>
+                                <p class="metric-value" id="ss-rop">—</p>
+                            </div>
+                            <div class="metric-card">
+                                <h4>Annual Holding Cost</h4>
+                                <p class="metric-value" id="ss-annualcost">—</p>
+                            </div>
+                            <div class="metric-card highlight">
+                                <h4>Z-Score</h4>
+                                <p class="metric-value" id="ss-zscore">—</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOE (Design of Experiments) Tool -->
+                <div id="doe-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>🧪 Design of Experiments (DOE)</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Number of Factors</label>
+                                <select id="doe-factors" onchange="updateDOEForm()">
+                                    <option value="2">2 Factors</option>
+                                    <option value="3" selected>3 Factors</option>
+                                    <option value="4">4 Factors</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Design Type</label>
+                                <select id="doe-type">
+                                    <option value="factorial">Full Factorial</option>
+                                    <option value="fractional">Fractional Factorial</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="doe-factors-container"></div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Response Variable (Results - comma separated)</label>
+                                <textarea id="doe-responses" placeholder="45, 52, 38, 48, 55, 60, 42, 50"></textarea>
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" onclick="calculateDOE()">🚀 Analyze DOE</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>📊 DOE Analysis Results</h3>
+                        <div id="doe-results" class="analysis-box">
+                            <p>Configure factors and responses, then calculate</p>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>📈 Main Effects Plot</h3>
+                        <canvas id="doe-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Pareto Analysis Tool -->
+                <div id="pareto-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>📊 Pareto Analysis (80/20 Rule)</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Issues/Categories (one per line)</label>
+                                <textarea id="pareto-categories" placeholder="Machine Downtime
+Quality Defects
+Supplier Delays
+Operator Error
+Material Shortage"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Impact/Frequency Values (comma-separated)</label>
+                                <textarea id="pareto-values" placeholder="450
+280
+120
+80
+70"></textarea>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="calculatePareto()">📊 Generate Pareto Chart</button>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>📊 Pareto Chart</h3>
+                        <canvas id="pareto-chart"></canvas>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h3>📋 80/20 Analysis</h3>
+                        <div id="pareto-analysis" class="analysis-box">
+                            <p>Enter data and calculate to see 80/20 breakdown</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Root Cause Analysis (5-Why) Tool -->
+                <div id="rootcause-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>🌳 Root Cause Analysis - 5-Why Method</h3>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Problem Statement</label>
+                                <textarea id="rootcause-problem" placeholder="e.g., Production line stopped for 2 hours"></textarea>
+                            </div>
+                        </div>
+
+                        <div id="rootcause-why-container"></div>
+
+                        <button class="btn-primary" onclick="updateRootCauseWhys()">🌳 Generate 5-Why Structure</button>
+                        <button class="btn-secondary" onclick="analyzeRootCause()">🔍 Analyze Root Cause</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>🌳 5-Why Tree</h3>
+                        <div id="rootcause-tree" class="tree-container" style="background: #f5f5f5; padding: 20px; border-radius: 8px;">
+                            <p style="color: #999;">Enter problem and click "Generate 5-Why Structure"</p>
+                        </div>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h3>📋 Root Cause Identified</h3>
+                        <div id="rootcause-result" class="analysis-box">
+                            <p>Complete the 5-Why analysis to identify root cause</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FMEA Tool -->
+                <div id="fmea-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>⚠️ Failure Mode & Effects Analysis (FMEA)</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>FMEA Type</label>
+                                <select id="fmea-type">
+                                    <option value="process">Process FMEA</option>
+                                    <option value="design">Design FMEA</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Process/Product Name</label>
+                                <input type="text" id="fmea-name" placeholder="e.g., Assembly Line A">
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" onclick="addFMEARow()">➕ Add Failure Mode</button>
+
+                        <div style="overflow-x: auto; margin-top: 20px;">
+                            <table class="fmea-table">
+                                <thead>
+                                    <tr>
+                                        <th>Failure Mode</th>
+                                        <th>Effects</th>
+                                        <th>Severity (1-10)</th>
+                                        <th>Occurrence (1-10)</th>
+                                        <th>Detection (1-10)</th>
+                                        <th>RPN</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fmea-table">
+                                    <tr><td colspan="7" style="text-align:center;">No failure modes added yet</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <button class="btn-primary" onclick="analyzeFMEA()" style="margin-top: 20px;">📊 Analyze FMEA</button>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h3>🚨 High-Risk Items (RPN > 100)</h3>
+                        <div id="fmea-high-risk" class="analysis-box">
+                            <p>Add failure modes and analyze to see high-risk items</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Matrix Tool -->
+                <div id="riskmatrix-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>🔴 Risk Matrix & Prioritization</h3>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Add Risk Items (one per line)</label>
+                                <textarea id="riskmatrix-items" placeholder="Supply chain disruption
+Equipment failure
+Quality issue
+Market demand shift
+Labor shortage"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Probability (1-5 for each, comma-separated)</label>
+                                <textarea id="riskmatrix-probability" placeholder="4
+3
+5
+2
+4"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Impact (1-5 for each, comma-separated)</label>
+                                <textarea id="riskmatrix-impact" placeholder="5
+4
+4
+3
+3"></textarea>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="calculateRiskMatrix()">🔴 Generate Risk Matrix</button>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>🔴 Risk Heat Map</h3>
+                        <canvas id="riskmatrix-chart"></canvas>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h3>📋 Risk Priorities</h3>
+                        <div id="riskmatrix-analysis" class="analysis-box">
+                            <p>Enter risks and calculate to see priorities</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hypothesis Testing Tool -->
+                <div id="hypothesis-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>📊 Hypothesis Testing</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Test Type</label>
+                                <select id="hypo-testtype" onchange="updateHypothesisForm()">
+                                    <option value="t-test-1sample">T-Test (1 Sample)</option>
+                                    <option value="t-test-2sample" selected>T-Test (2 Sample)</option>
+                                    <option value="anova">ANOVA</option>
+                                    <option value="chi-square">Chi-Square</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Significance Level (α)</label>
+                                <select id="hypo-alpha">
+                                    <option value="0.10">0.10 (90% confidence)</option>
+                                    <option value="0.05" selected>0.05 (95% confidence)</option>
+                                    <option value="0.01">0.01 (99% confidence)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="hypothesis-form-container"></div>
+
+                        <button class="btn-primary" onclick="calculateHypothesis()">🚀 Perform Test</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>📊 Test Results</h3>
+                        <div id="hypothesis-results" class="analysis-box">
+                            <p>Configure test parameters and click "Perform Test"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Value Stream Mapping Tool -->
+                <div id="vsm-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>🔄 Value Stream Mapping</h3>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Process Steps (one per line: Name | Cycle Time | Is Value-Add)</label>
+                                <textarea id="vsm-steps" placeholder="Raw Material | 0 | No
+Cutting | 2.5 | Yes
+Waiting (Quality Check) | 4 | No
+Assembly | 3 | Yes
+Packaging | 1 | Yes
+Shipping Prep | 2 | No"></textarea>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="analyzeVSM()">🔄 Analyze Value Stream</button>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>🔄 Value Stream Map</h3>
+                        <canvas id="vsm-chart"></canvas>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h3>📊 Waste Analysis</h3>
+                        <div id="vsm-analysis" class="analysis-box">
+                            <p>Enter process steps and analyze to see waste breakdown</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Process Mapping Tool -->
+                <div id="processmap-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>🗺️ Process Mapping & Bottleneck Analysis</h3>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Process Steps (one per line: Name | Cycle Time | Resource Capacity)</label>
+                                <textarea id="processmap-steps" placeholder="Step 1 - Intake | 10 | 100
+Step 2 - Processing | 15 | 80
+Step 3 - QC | 5 | 100
+Step 4 - Packaging | 8 | 100"></textarea>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="analyzeProcessMap()">🗺️ Analyze Process</button>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>📊 Utilization & Bottlenecks</h3>
+                        <canvas id="processmap-chart"></canvas>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h3>🚨 Bottleneck Report</h3>
+                        <div id="processmap-analysis" class="analysis-box">
+                            <p>Enter process steps to identify bottlenecks</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DMAIC Tracker Tool -->
+                <div id="dmaic-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>✅ DMAIC Project Tracker</h3>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Project Name</label>
+                                <input type="text" id="dmaic-projectname" placeholder="e.g., Reduce Defect Rate in Assembly">
+                            </div>
+                            <div class="form-group">
+                                <label>Project Status</label>
+                                <select id="dmaic-status">
+                                    <option value="define">Define</option>
+                                    <option value="measure">Measure</option>
+                                    <option value="analyze" selected>Analyze</option>
+                                    <option value="improve">Improve</option>
+                                    <option value="control">Control</option>
+                                    <option value="closed">Closed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Project Leader</label>
+                                <input type="text" id="dmaic-leader" placeholder="Name">
+                            </div>
+                            <div class="form-group">
+                                <label>Target Savings ($)</label>
+                                <input type="number" id="dmaic-savings" placeholder="10000" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Baseline Metric</label>
+                                <input type="text" id="dmaic-baseline" placeholder="e.g., 5% defect rate">
+                            </div>
+                            <div class="form-group">
+                                <label>Target Metric</label>
+                                <input type="text" id="dmaic-target" placeholder="e.g., 2% defect rate">
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" onclick="addDMAICProject()">➕ Add Project</button>
+                        <button class="btn-secondary" onclick="analyzeDMAIC()">📊 Calculate ROI</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>📊 Project Portfolio</h3>
+                        <table class="data-table" id="dmaic-table">
+                            <thead>
+                                <tr>
+                                    <th>Project Name</th>
+                                    <th>Status</th>
+                                    <th>Leader</th>
+                                    <th>Target Savings</th>
+                                    <th>Progress</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dmaic-tbody">
+                                <tr><td colspan="6" style="text-align:center;">No projects yet</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h3>💰 Portfolio ROI Summary</h3>
+                        <div id="dmaic-roi" class="analysis-box">
+                            <p>Add projects to see ROI summary</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kaizen Events Tool -->
+                <div id="kaizen-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>🌱 Kaizen Event Tracker</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Event Title</label>
+                                <input type="text" id="kaizen-title" placeholder="e.g., Setup Time Reduction">
+                            </div>
+                            <div class="form-group">
+                                <label>Event Date</label>
+                                <input type="date" id="kaizen-date">
+                            </div>
+                            <div class="form-group">
+                                <label>Department</label>
+                                <input type="text" id="kaizen-department" placeholder="e.g., Assembly">
+                            </div>
+                            <div class="form-group">
+                                <label>Participants</label>
+                                <input type="number" id="kaizen-participants" placeholder="5" min="1">
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Improvements (one per line)</label>
+                                <textarea id="kaizen-improvements" placeholder="Organized tool storage
+Standardized process steps
+Cross-trained operators"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Estimated Savings ($)</label>
+                                <input type="number" id="kaizen-savings" placeholder="5000" min="0">
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" onclick="addKaizenEvent()">➕ Log Event</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>🌱 Event History</h3>
+                        <table class="data-table" id="kaizen-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Date</th>
+                                    <th>Department</th>
+                                    <th>Participants</th>
+                                    <th>Improvements</th>
+                                    <th>Savings</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kaizen-tbody">
+                                <tr><td colspan="6" style="text-align:center;">No events logged yet</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h3>📊 Kaizen Impact</h3>
+                        <div id="kaizen-impact" class="analysis-box">
+                            <p>Log events to see impact analysis</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MSA (Gage R&R) Tool -->
+                <div id="msa-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>🔬 Measurement System Analysis (Gage R&R)</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Gage Name</label>
+                                <input type="text" id="msa-gagename" placeholder="e.g., Digital Calipers">
+                            </div>
+                            <div class="form-group">
+                                <label>Number of Operators</label>
+                                <select id="msa-operators">
+                                    <option value="2">2</option>
+                                    <option value="3" selected>3</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Number of Parts</label>
+                                <select id="msa-parts">
+                                    <option value="5">5</option>
+                                    <option value="10" selected>10</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tolerance (±)</label>
+                                <input type="number" id="msa-tolerance" placeholder="0.5" min="0" step="0.01">
+                            </div>
+                        </div>
+
+                        <div id="msa-data-container"></div>
+
+                        <button class="btn-primary" onclick="calculateMSA()">🔬 Analyze Gage R&R</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>🔬 Gage R&R Results</h3>
+                        <div id="msa-results" class="analysis-box">
+                            <p>Configure parameters and enter data to analyze</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Supplier Scorecard Tool -->
+                <div id="supplier-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>🤝 Supplier Performance Scorecard</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Supplier Name</label>
+                                <input type="text" id="supplier-name" placeholder="e.g., ABC Manufacturing">
+                            </div>
+                            <div class="form-group">
+                                <label>Evaluation Period</label>
+                                <input type="month" id="supplier-period">
+                            </div>
+                            <div class="form-group">
+                                <label>Quality Score (0-100)</label>
+                                <input type="number" id="supplier-quality" placeholder="85" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>Delivery Score (0-100)</label>
+                                <input type="number" id="supplier-delivery" placeholder="90" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>Cost Score (0-100)</label>
+                                <input type="number" id="supplier-cost" placeholder="75" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>Responsiveness Score (0-100)</label>
+                                <input type="number" id="supplier-response" placeholder="88" min="0" max="100">
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" onclick="addSupplierScore()">➕ Add Scorecard</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>🤝 Supplier Rankings</h3>
+                        <table class="data-table" id="supplier-table">
+                            <thead>
+                                <tr>
+                                    <th>Supplier</th>
+                                    <th>Period</th>
+                                    <th>Quality</th>
+                                    <th>Delivery</th>
+                                    <th>Cost</th>
+                                    <th>Response</th>
+                                    <th>Overall Score</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="supplier-tbody">
+                                <tr><td colspan="8" style="text-align:center;">No suppliers rated yet</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>📊 Supplier Performance Trends</h3>
+                        <canvas id="supplier-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Lean Metrics Tool -->
+                <div id="metrics-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>📊 Lean Metrics Dashboard</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Shift Length (minutes)</label>
+                                <input type="number" id="metrics-shiftlength" placeholder="480" value="480" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Takt Time (minutes/unit)</label>
+                                <input type="number" id="metrics-takttime" placeholder="12" min="0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Actual Cycle Time (min/unit)</label>
+                                <input type="number" id="metrics-cycletime" placeholder="10" min="0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Planned Production (units)</label>
+                                <input type="number" id="metrics-planned" placeholder="40" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Actual Production (units)</label>
+                                <input type="number" id="metrics-actual" placeholder="38" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Lead Time (days)</label>
+                                <input type="number" id="metrics-leadtime" placeholder="5" min="0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>First Pass Yield (%)</label>
+                                <input type="number" id="metrics-fpy" placeholder="95" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>Downtime (minutes)</label>
+                                <input type="number" id="metrics-downtime" placeholder="30" min="0">
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" onclick="calculateLeanMetrics()">📊 Calculate Metrics</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>📊 Key Metrics</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <h4>Takt vs Cycle</h4>
+                                <p class="metric-value" id="metrics-tackcycle">—</p>
+                                <p class="metric-label">Capacity utilization</p>
+                            </div>
+                            <div class="metric-card">
+                                <h4>Production Rate</h4>
+                                <p class="metric-value" id="metrics-rate">—</p>
+                            </div>
+                            <div class="metric-card">
+                                <h4>First Pass Yield</h4>
+                                <p class="metric-value" id="metrics-fpyvalue">—</p>
+                            </div>
+                            <div class="metric-card highlight">
+                                <h4>Overall Equipment Effectiveness</h4>
+                                <p class="metric-value" id="metrics-oee">—</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tool -->
+                <div id="settings-tool" class="tool-container">
+                    <div class="form-section">
+                        <h3>⚙️ System Settings</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Company Name</label>
+                                <input type="text" id="settings-company" placeholder="My Manufacturing Co.">
+                            </div>
+                            <div class="form-group">
+                                <label>Currency</label>
+                                <select id="settings-currency">
+                                    <option value="USD">USD ($)</option>
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="GBP">GBP (£)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Default Service Level (%)</label>
+                                <input type="number" id="settings-servicelevel" placeholder="95" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>Default Sigma Level</label>
+                                <select id="settings-sigma">
+                                    <option value="3">3-Sigma (99.73%)</option>
+                                    <option value="4" selected>4-Sigma (99.99%)</option>
+                                    <option value="6">6-Sigma (99.9997%)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-section" style="margin-top: 30px;">
+                            <h3>💾 Data Management</h3>
+                            <div class="button-group">
+                                <button class="btn-secondary" onclick="exportAllData()">📥 Export All Data (JSON)</button>
+                                <button class="btn-secondary" onclick="importData()">📤 Import Data</button>
+                                <button class="btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" onclick="saveSettings()" style="margin-top: 20px;">💾 Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Help Dialog -->
+    <div id="helpModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeHelp()">&times;</span>
+            <h2 id="helpTitle">Help</h2>
+            <p id="helpContent">Loading help content...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
